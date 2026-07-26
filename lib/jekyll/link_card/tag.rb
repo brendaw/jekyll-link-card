@@ -1,15 +1,21 @@
+# frozen_string_literal: true
+
 require "liquid"
 
 module Jekyll
   module LinkCard
     class Tag < Liquid::Tag
-      SYNTAX = /\A\s*(\S+)\s*\z/
+      SYNTAX = /\A\s*(\S+)\s*\z/.freeze
 
-      DEFAULT_CSS = <<~CSS.freeze
+      DEFAULT_CSS = <<~CSS
         .link-card{display:flex;border:1px solid #e1e4e8;border-radius:6px;overflow:hidden;max-width:600px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;margin:1em 0}.link-card-image{width:200px;min-height:150px;object-fit:cover;border-right:1px solid #e1e4e8}.link-card-content{padding:12px 16px;display:flex;flex-direction:column;justify-content:center;min-width:0}.link-card-title{font-size:16px;font-weight:600;color:#0366d6;text-decoration:none;margin:0 0 4px;line-height:1.3}.link-card-title:hover{text-decoration:underline}.link-card-description{font-size:14px;color:#586069;margin:0;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
       CSS
 
-      @@style_output = false
+      @style_output = false
+
+      class << self
+        attr_accessor :style_output
+      end
 
       def initialize(_tag_name, markup, _parse_context)
         super
@@ -55,27 +61,28 @@ module Jekyll
         cards[@url]
       end
 
-      def build_html(og)
-        title = escape(og["og:title"] || @url)
-        description = escape(og["og:description"] || "")
-        image = og["og:image"]
-        url = escape(og["url"] || @url)
+      def build_html(data)
+        title = escape(data["og:title"] || @url)
+        description = escape(data["og:description"] || "")
+        image = data["og:image"]
+        url = escape(data["url"] || @url)
 
-        "#{style_tag}#{"\n"}#{<<~HTML}"
-          <div class="link-card">
-            #{image_tag(image)}
-            <div class="link-card-content">
-              <a href="#{url}" class="link-card-title" target="_blank" rel="noopener noreferrer">#{title}</a>
-              #{description_tag(description)}
-            </div>
-          </div>
-        HTML
+        "#{style_tag}
+#{<<~HTML}"
+  <div class="link-card">
+    #{image_tag(image)}
+    <div class="link-card-content">
+      <a href="#{url}" class="link-card-title" target="_blank" rel="noopener noreferrer">#{title}</a>
+      #{description_tag(description)}
+    </div>
+  </div>
+HTML
       end
 
       def style_tag
-        return "" if @@style_output
+        return "" if self.class.style_output
 
-        @@style_output = true
+        self.class.style_output = true
         "<style>#{DEFAULT_CSS}</style>"
       end
 
@@ -93,10 +100,10 @@ module Jekyll
 
       def escape(str)
         str.to_s
-          .gsub("&", "&amp;")
-          .gsub("<", "&lt;")
-          .gsub(">", "&gt;")
-          .gsub('"', "&quot;")
+           .gsub("&", "&amp;")
+           .gsub("<", "&lt;")
+           .gsub(">", "&gt;")
+           .gsub('"', "&quot;")
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 # Require only the modules we need, skipping tag.rb (which requires liquid)
@@ -9,10 +11,17 @@ require "jekyll/link_card/cache"
 # Stub Liquid before loading tag
 module Liquid
   class Tag
-    def self.new(*); super; end
+    def self.new(*)
+      super
+    end
+
     def initialize(_tag_name, _markup, _parse_context); end
-    def render(_context); ""; end
+
+    def render(_context)
+      ""
+    end
   end
+
   class Template
     def self.register_tag(_name, _klass); end
   end
@@ -24,7 +33,7 @@ RSpec.describe Jekyll::LinkCard::Tag do
   let(:tag) { described_class.new("link_card", " https://example.com ", nil) }
 
   before do
-    Jekyll::LinkCard::Tag.class_variable_set(:@@style_output, false)
+    Jekyll::LinkCard::Tag.style_output = false
   end
 
   describe "#build_html" do

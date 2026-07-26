@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "jekyll/link_card/version"
 require "jekyll/link_card/og_fetcher"
 require "jekyll/link_card/cache"

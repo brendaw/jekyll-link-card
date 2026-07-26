@@ -1,12 +1,21 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 # Stub Liquid before loading tag
 module Liquid
   class Tag
-    def self.new(*); super; end
+    def self.new(*)
+      super
+    end
+
     def initialize(_tag_name, _markup, _parse_context); end
-    def render(_context); ""; end
+
+    def render(_context)
+      ""
+    end
   end
+
   class Template
     def self.register_tag(_name, _klass); end
   end
@@ -18,7 +27,7 @@ RSpec.describe "Jekyll::LinkCard integration" do
   let(:cache_dir) { "tmp/cache/link-card-test" }
 
   before do
-    Jekyll::LinkCard::Tag.class_variable_set(:@@style_output, false)
+    Jekyll::LinkCard::Tag.style_output = false
     stub_const("Jekyll::LinkCard::Cache::CACHE_DIR", cache_dir)
     FileUtils.rm_rf(cache_dir)
   end
@@ -76,16 +85,16 @@ RSpec.describe "Jekyll::LinkCard integration" do
   describe "hybrid mode" do
     it "reads from site data without HTTP" do
       site = double("site",
-        config: { "link_card" => { "mode" => "hybrid" } },
-        data: {
-          "link-cards" => {
-            "https://hybrid.com" => {
-              "og:title" => "Hybrid Card",
-              "og:description" => "From YAML",
-              "url" => "https://hybrid.com"
-            }
-          }
-        })
+                    config: { "link_card" => { "mode" => "hybrid" } },
+                    data: {
+                      "link-cards" => {
+                        "https://hybrid.com" => {
+                          "og:title" => "Hybrid Card",
+                          "og:description" => "From YAML",
+                          "url" => "https://hybrid.com"
+                        }
+                      }
+                    })
 
       tag = Jekyll::LinkCard::Tag.new("link_card", " https://hybrid.com ", nil)
       context = double("context", registers: { site: site })
