@@ -1,0 +1,10 @@
+title: My Jekyll Site
+description: A sample site using jekyll-link-card
+
+plugins:
+  - jekyll-link-card
+
+# Optional: configure link card behavior
+# link_card:
+#   mode: preprocess  # default: fetch OG tags at build time
+#   mode: hybrid      # read from _data/link-cards.yml instead
