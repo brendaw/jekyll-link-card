@@ -1,0 +1,20 @@
+# Cache directory for link card OG data
+tmp/cache/link-card/
+
+# Gem build artifacts
+*.gem
+pkg/
+
+# Bundler
+.bundle/
+vendor/bundle/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
