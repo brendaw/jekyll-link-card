@@ -78,6 +78,83 @@ https://example.com:
 3. Renders an HTML card with embedded CSS
 4. **Hybrid mode**: Reads from `_data/link-cards.yml` (no HTTP requests)
 
+## Integration Guide (Existing Jekyll Site)
+
+Step-by-step to add link cards to your site:
+
+### 1. Add the gem
+
+```ruby
+# Gemfile
+gem "jekyll-link-card"
+```
+
+```sh
+bundle install
+```
+
+### 2. Enable the plugin
+
+```yaml
+# _config.yml
+plugins:
+  - jekyll-link-card
+```
+
+> **GitHub Pages?** Add `gem "jekyll-link-card"` to `Gemfile` and create a `.github/workflows/jekyll.yml` that runs `bundle install` before build. Or use [jekyll-plugins](https://github.com/github/pages-gem#plugins) workaround.
+
+### 3. Use in posts/pages
+
+```liquid
+{% link_card https://example.com %}
+```
+
+### 4. (Optional) Customize the card style
+
+Cards use default CSS. To override, add to your stylesheet:
+
+```css
+.link-card { max-width: 500px; }
+.link-card-title { color: #1a73e8; }
+.link-card-description { font-size: 13px; }
+```
+
+### 5. (Optional) Switch to hybrid mode
+
+If you have many cards and want faster builds, use hybrid mode:
+
+```yaml
+# _config.yml
+link_card:
+  mode: hybrid
+```
+
+Then define your cards in `_data/link-cards.yml`:
+
+```yaml
+https://example.com:
+  og:title: Example Domain
+  og:description: A description of the page.
+  og:image: https://example.com/preview.png
+```
+
+### 6. Clear the cache
+
+If a card looks stale, delete the cache:
+
+```sh
+rm -rf tmp/cache/link-card/
+```
+
+### Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| Card shows nothing | Check URL is accessible, check `tmp/cache/link-card/` |
+| Build is slow | Switch to hybrid mode |
+| Image not showing | Verify `og:image` is an absolute URL |
+| CSS conflicts | Override `.link-card` classes in your stylesheet |
+
 ## Development
 
 ```sh
