@@ -92,7 +92,7 @@ Per-link overrides global. Set to `0` or omit for no limit.
 
 1. **Preprocess mode**: Fetches the URL, extracts `og:title`, `og:description`, and `og:image` via Nokogiri
 2. Caches the result in `tmp/cache/link-card/` (24h TTL, SHA256 key)
-3. Renders an HTML card with embedded CSS
+3. Renders a full-width HTML card with cover image and embedded CSS
 4. **Hybrid mode**: Reads from `_data/link-cards.yml` (no HTTP requests)
 
 ## Integration Guide (Existing Jekyll Site)
@@ -140,9 +140,9 @@ Or per-link:
 {% link_card https://example.com truncation:1 %}
 ```
 
-### 4. (Optional) Customize the card style
+### 5. (Optional) Customize the card style
 
-Cards use default CSS. To override, add to your stylesheet:
+Cards use default CSS with full-width layout and cover images. To override, add to your stylesheet:
 
 ```css
 .link-card { max-width: 500px; }
@@ -150,7 +150,7 @@ Cards use default CSS. To override, add to your stylesheet:
 .link-card-description { font-size: 13px; }
 ```
 
-### 5. (Optional) Switch to hybrid mode
+### 6. (Optional) Switch to hybrid mode
 
 If you have many cards and want faster builds, use hybrid mode:
 

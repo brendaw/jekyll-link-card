@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-07-26
+
+### Changed
+
+- Image now uses cover mode (fills and centers within container)
+- Cards use full-width layout instead of max-width 600px
+
+### Added
+
+- Description truncation option (`truncation:N`) per-link or globally via `link_card.truncation`
+
+## [0.1.0] - 2026-07-26
+
 ### Added
 
 - Liquid tag `{% link_card URL %}` for rendering OG preview cards
