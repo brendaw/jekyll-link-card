@@ -71,6 +71,7 @@ https://example.com:
 |-----|---------|-------------|
 | `link_card.mode` | `preprocess` | `preprocess` (fetch + cache) or `hybrid` (read from YAML) |
 | `link_card.truncation` | `0` (no limit) | Max lines for description text |
+| `link_card.display` | `inline` | `inline` (image left) or `block` (image top) |
 
 ### Truncation
 
@@ -87,6 +88,25 @@ link_card:
 ```
 
 Per-link overrides global. Set to `0` or omit for no limit.
+
+### Display Mode
+
+Choose between inline (horizontal) or block (vertical) layout:
+
+```yaml
+# _config.yml — global
+link_card:
+  display: block
+```
+
+```liquid
+{% link_card https://example.com display:block %}
+```
+
+| Mode | Layout |
+|------|--------|
+| `inline` | Image left, title + description right (default) |
+| `block` | Image top, title + description bottom |
 
 ## How It Works
 
@@ -140,7 +160,21 @@ Or per-link:
 {% link_card https://example.com truncation:1 %}
 ```
 
-### 5. (Optional) Customize the card style
+### 5. (Optional) Choose display mode
+
+```yaml
+# _config.yml — global (all cards vertical)
+link_card:
+  display: block
+```
+
+Or per-link:
+
+```liquid
+{% link_card https://example.com display:block %}
+```
+
+### 6. (Optional) Customize the card style
 
 Cards use default CSS with full-width layout and cover images. To override, add to your stylesheet:
 

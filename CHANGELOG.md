@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-07-26
+
+### Added
+
+- Block display mode (`display:block`) with image on top and caption below
+- Display config option (`link_card.display`) for global default
+
 ## [0.1.1] - 2026-07-26
 
 ### Changed

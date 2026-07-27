@@ -32,6 +32,8 @@ require "jekyll/link_card/tag"
 RSpec.describe Jekyll::LinkCard::Tag do
   let(:tag) { described_class.new("link_card", " https://example.com ", nil) }
   let(:tag_with_truncation) { described_class.new("link_card", " https://example.com truncation:3 ", nil) }
+  let(:tag_with_display) { described_class.new("link_card", " https://example.com display:block ", nil) }
+  let(:tag_with_both) { described_class.new("link_card", " https://example.com truncation:2 display:block ", nil) }
 
   before do
     Jekyll::LinkCard::Tag.style_output = false
@@ -48,6 +50,19 @@ RSpec.describe Jekyll::LinkCard::Tag do
 
     it "defaults truncation to nil" do
       expect(tag.instance_variable_get(:@truncation)).to be_nil
+    end
+
+    it "parses display:block from markup" do
+      expect(tag_with_display.instance_variable_get(:@display)).to eq("block")
+    end
+
+    it "parses both truncation and display" do
+      expect(tag_with_both.instance_variable_get(:@truncation)).to eq(2)
+      expect(tag_with_both.instance_variable_get(:@display)).to eq("block")
+    end
+
+    it "defaults display to nil" do
+      expect(tag.instance_variable_get(:@display)).to be_nil
     end
   end
 
@@ -120,6 +135,23 @@ RSpec.describe Jekyll::LinkCard::Tag do
       html = tag.send(:build_html, og)
 
       expect(html).to include("width:100%")
+    end
+
+    it "renders inline layout by default" do
+      og = { "og:title" => "Title", "url" => "https://example.com" }
+
+      html = tag.send(:build_html, og)
+
+      expect(html).to include('class="link-card"')
+      expect(html).not_to include('class="link-card link-card-block"')
+    end
+
+    it "renders block layout when display:block" do
+      og = { "og:title" => "Title", "url" => "https://example.com" }
+
+      html = tag.send(:build_html, og, 0, "block")
+
+      expect(html).to include('class="link-card link-card-block"')
     end
   end
 
