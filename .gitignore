@@ -18,3 +18,4 @@ vendor/bundle/
 # OS
 .DS_Store
 Thumbs.db
+Gemfile.lock
