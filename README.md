@@ -30,7 +30,7 @@ Get up and running in 5 minutes:
 # 1. Add to your site's Gemfile
 cat >> Gemfile <<'EOF'
 
-gem "jekyll-link-card"
+gem "jekyll-link-card", git: "https://github.com/brendaw/jekyll-link-card", tag: "v0.2.0"
 EOF
 
 # 2. Install
@@ -71,19 +71,9 @@ scripts/
 
 ## 1. Installation in your Jekyll site
 
-### Option A — from RubyGems (recommended)
+### Option A — from GitHub (recommended)
 
 In the site's `Gemfile`:
-
-```ruby
-gem "jekyll-link-card"
-```
-
-```bash
-bundle install
-```
-
-### Option B — from GitHub
 
 ```ruby
 gem "jekyll-link-card", git: "https://github.com/brendaw/jekyll-link-card", tag: "v0.2.0"
@@ -93,7 +83,7 @@ gem "jekyll-link-card", git: "https://github.com/brendaw/jekyll-link-card", tag:
 bundle install
 ```
 
-### Option C — vendored (local copy)
+### Option B — vendored (local copy)
 
 Clone or copy the gem into the site repo:
 
