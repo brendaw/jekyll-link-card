@@ -31,9 +31,24 @@ require "jekyll/link_card/tag"
 
 RSpec.describe Jekyll::LinkCard::Tag do
   let(:tag) { described_class.new("link_card", " https://example.com ", nil) }
+  let(:tag_with_truncation) { described_class.new("link_card", " https://example.com truncation:3 ", nil) }
 
   before do
     Jekyll::LinkCard::Tag.style_output = false
+  end
+
+  describe "#initialize" do
+    it "parses URL from markup" do
+      expect(tag.instance_variable_get(:@url)).to eq("https://example.com")
+    end
+
+    it "parses truncation from markup" do
+      expect(tag_with_truncation.instance_variable_get(:@truncation)).to eq(3)
+    end
+
+    it "defaults truncation to nil" do
+      expect(tag.instance_variable_get(:@truncation)).to be_nil
+    end
   end
 
   describe "#build_html" do
@@ -90,6 +105,22 @@ RSpec.describe Jekyll::LinkCard::Tag do
 
       expect(html2).not_to include("<style>")
     end
+
+    it "applies truncation to description when specified" do
+      og = { "og:title" => "Title", "og:description" => "Desc", "url" => "https://example.com" }
+
+      html = tag.send(:build_html, og, 1)
+
+      expect(html).to include("-webkit-line-clamp:1")
+    end
+
+    it "uses full width" do
+      og = { "og:title" => "Title", "url" => "https://example.com" }
+
+      html = tag.send(:build_html, og)
+
+      expect(html).to include("width:100%")
+    end
   end
 
   describe "#escape" do
@@ -129,6 +160,18 @@ RSpec.describe Jekyll::LinkCard::Tag do
 
     it "returns empty string when text is empty" do
       expect(tag.send(:description_tag, "")).to eq("")
+    end
+
+    it "applies truncation style when specified" do
+      html = tag.send(:description_tag, "Hello world", 3)
+
+      expect(html).to include("-webkit-line-clamp:3")
+    end
+
+    it "does not apply truncation style when zero" do
+      html = tag.send(:description_tag, "Hello world", 0)
+
+      expect(html).not_to include("-webkit-line-clamp")
     end
   end
 

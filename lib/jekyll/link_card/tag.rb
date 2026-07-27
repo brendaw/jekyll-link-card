@@ -5,10 +5,10 @@ require "liquid"
 module Jekyll
   module LinkCard
     class Tag < Liquid::Tag
-      SYNTAX = /\A\s*(\S+)\s*\z/.freeze
+      SYNTAX = /\A\s*(\S+)(?:\s+truncation:(\d+))?\s*\z/.freeze
 
       DEFAULT_CSS = <<~CSS
-        .link-card{display:flex;border:1px solid #e1e4e8;border-radius:6px;overflow:hidden;max-width:600px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;margin:1em 0}.link-card-image{width:200px;min-height:150px;object-fit:cover;border-right:1px solid #e1e4e8}.link-card-content{padding:12px 16px;display:flex;flex-direction:column;justify-content:center;min-width:0}.link-card-title{font-size:16px;font-weight:600;color:#0366d6;text-decoration:none;margin:0 0 4px;line-height:1.3}.link-card-title:hover{text-decoration:underline}.link-card-description{font-size:14px;color:#586069;margin:0;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+        .link-card{display:flex;border:1px solid #e1e4e8;border-radius:6px;overflow:hidden;width:100%;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;margin:1em 0}.link-card-image{position:relative;width:200px;min-height:150px;flex-shrink:0;border-right:1px solid #e1e4e8}.link-card-image img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}.link-card-content{padding:12px 16px;display:flex;flex-direction:column;justify-content:center;min-width:0}.link-card-title{font-size:16px;font-weight:600;color:#0366d6;text-decoration:none;margin:0 0 4px;line-height:1.3}.link-card-title:hover{text-decoration:underline}.link-card-description{font-size:14px;color:#586069;margin:0;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
       CSS
 
       @style_output = false
@@ -20,19 +20,22 @@ module Jekyll
       def initialize(_tag_name, markup, _parse_context)
         super
         match = markup.match(SYNTAX)
-        raise SyntaxError, "Syntax: {% link_card URL %}" unless match
+        raise SyntaxError, "Syntax: {% link_card URL [truncation:N] %}" unless match
 
         @url = match[1]
+        @truncation = match[2]&.to_i
       end
 
       def render(context)
         site = context.registers[:site]
         mode = site.config.dig("link_card", "mode") || "preprocess"
+        global_truncation = site.config.dig("link_card", "truncation")
 
         og = resolve(site, mode)
         return "" unless og
 
-        build_html(og)
+        truncation = @truncation || global_truncation
+        build_html(og, truncation.to_i)
       rescue StandardError
         ""
       end
@@ -61,7 +64,7 @@ module Jekyll
         cards[@url]
       end
 
-      def build_html(data)
+      def build_html(data, truncation = 0)
         title = escape(data["og:title"] || @url)
         description = escape(data["og:description"] || "")
         image = data["og:image"]
@@ -73,7 +76,7 @@ module Jekyll
     #{image_tag(image)}
     <div class="link-card-content">
       <a href="#{url}" class="link-card-title" target="_blank" rel="noopener noreferrer">#{title}</a>
-      #{description_tag(description)}
+      #{description_tag(description, truncation)}
     </div>
   </div>
 HTML
@@ -92,10 +95,11 @@ HTML
         %(<img src="#{escape(src)}" alt="" class="link-card-image" loading="lazy" />)
       end
 
-      def description_tag(text)
+      def description_tag(text, truncation = 0)
         return "" if text.empty?
 
-        %(<p class="link-card-description">#{text}</p>)
+        style = truncation.positive? ? " style=\"-webkit-line-clamp:#{truncation}\"" : ""
+        %(<p class="link-card-description"#{style}>#{text}</p>)
       end
 
       def escape(str)

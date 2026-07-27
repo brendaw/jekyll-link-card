@@ -70,6 +70,23 @@ https://example.com:
 | Key | Default | Description |
 |-----|---------|-------------|
 | `link_card.mode` | `preprocess` | `preprocess` (fetch + cache) or `hybrid` (read from YAML) |
+| `link_card.truncation` | `0` (no limit) | Max lines for description text |
+
+### Truncation
+
+Control description text truncation globally or per-link:
+
+```yaml
+# _config.yml — global (applies to all cards)
+link_card:
+  truncation: 2
+```
+
+```liquid
+{% link_card https://example.com truncation:3 %}
+```
+
+Per-link overrides global. Set to `0` or omit for no limit.
 
 ## How It Works
 
@@ -107,6 +124,20 @@ plugins:
 
 ```liquid
 {% link_card https://example.com %}
+```
+
+### 4. (Optional) Limit description length
+
+```yaml
+# _config.yml — global (2 lines max)
+link_card:
+  truncation: 2
+```
+
+Or per-link:
+
+```liquid
+{% link_card https://example.com truncation:1 %}
 ```
 
 ### 4. (Optional) Customize the card style
